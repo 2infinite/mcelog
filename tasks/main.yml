@@ -1,0 +1,35 @@
+---
+# Setup mcelogd
+  - name: Install mcelog
+    yum: name={{ item }} state=latest
+    with_items:
+     - mcelog
+    when: (ansible_distribution == "CentOS" )
+
+  - name: Ensure mcelogd is running (and enable it at boot)
+    service: name=mcelogd state=started enabled=yes
+    when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "6")
+
+  - name: Change /etc/sysconfig/mcelogd
+    lineinfile: dest=/etc/sysconfig/mcelogd regexp="^MCELOG_OPTIONS="  line="MCELOG_OPTIONS=\"--syslog-error\""
+    notify:
+          - reload mcelogd
+    when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "6")
+
+
+  - name: Change /etc/mcelog/mcelog.conf
+    lineinfile: dest=/etc/mcelog/mcelog.conf regexp="syslog-error"  line="syslog-error = yes"
+    notify:
+          - reload mcelogd
+    when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "6")
+
+  - name: Change /etc/mcelog.conf
+    lineinfile: dest=/etc/mcelog.conf regexp="syslog-error"  line="syslog-error = yes"
+    when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "5")
+
+  - name: Change /etc/cron.hourly/mcelog.cron
+    lineinfile: dest=/etc/cron.hourly/mcelog.cron regexp="/usr/sbin/mcelog --ignorenodev"  line="/usr/sbin/mcelog --ignorenodev --filter --syslog-error >> /var/log/mcelog"
+    when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "5")
+
+
+

@@ -1,0 +1,14 @@
+---
+galaxy_info:
+  author: 2infinite
+  description: An Ansible role that setup mcelogd 
+  license: BSD
+  min_ansible_version: 1.9
+  platforms:
+  - name: EL
+    versions:
+    - 6
+    - 5
+  galaxy_tags:
+    - mcelogd
+    - system

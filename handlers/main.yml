@@ -1,0 +1,4 @@
+---
+    - name: reload mcelogd
+      service: name=mcelogd state=reloaded
+
